@@ -91,11 +91,14 @@ app.get("/messages", async (req, res) => {
     const limit = req.query.limit;
     const user = req.headers.user;
     try {
-        if (limit) {
-            const mensagens = await db.collection("messages").find({ $or: [{ to: user, type: "private_message" }, { type: "message" }, { type: "status" }, { from: user }] }).limit(parseInt(limit)).toArray();
+        const msgs = await db.collection("messages").find({}).toArray();
+        const pula = msgs.length;
+        console.log(pula)
+        if (limit && parseInt(limit) < pula) {
+            const mensagens = await db.collection("messages").find({ $or: [{ to: user, type: "private_message" }, { type: "message" }, { type: "status" }, { from: user }] }).skip(pula - parseInt(limit)).toArray();
             res.send(mensagens);
         } else {
-            const mensagens = await db.collection("messages").find({}).toArray();
+            const mensagens = await db.collection("messages").find({ $or: [{ to: user, type: "private_message" }, { type: "message" }, { type: "status" }, { from: user }] }).toArray();
             res.send(mensagens);
         }
     } catch (error) {
