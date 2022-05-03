@@ -121,7 +121,7 @@ app.post("/status", async (req, res) => {
             const participantesRemovidos = await db.collection("participantes").find({ lastStatus: { $lt: Date.now() - 11000 } }).toArray();
             if (participantesRemovidos.length > 0) {
                 await db.collection("messages").insertOne({ from: participantesRemovidos[0].name, to: "Todos", text: "sai da sala...", type: "status", time: dayjs().format('HH:MM:ss') });
-                await db.collection("participantes").deleteOne({ lastStatus: { $lt: Date.now() - 11 } });
+                await db.collection("participantes").deleteOne({ lastStatus: { $lt: Date.now() - 11000 } });
             }
         }, 15000);
     } catch (error) {
